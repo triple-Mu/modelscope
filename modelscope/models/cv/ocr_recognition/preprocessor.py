@@ -75,6 +75,7 @@ class OCRRecognitionPreprocessor(Preprocessor):
                 raise TypeError(
                     f'inputs should be either (a list of) str, PIL.Image, np.array, but got {type(item)}'
                 )
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             img = self.keepratio_resize(img)
             img = torch.FloatTensor(img)
             if self.do_chunking:
