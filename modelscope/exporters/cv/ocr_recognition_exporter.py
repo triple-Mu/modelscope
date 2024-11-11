@@ -26,7 +26,7 @@ class OCRRecognitionExporter(TorchModelExporter):
         self.model.onnx_export = True
         self.model.eval()
         _ = self.model(dummy_input)
-        torch.onnx._export(
+        torch.onnx.export(
             self.model,
             dummy_input,
             onnx_file,

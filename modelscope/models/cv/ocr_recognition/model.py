@@ -93,6 +93,7 @@ class OCRRecognition(TorchModel):
                 f'recognizer should be either ConvNextViT, CRNN, but got {cfgs.model.recognizer}'
             )
         if model_path != '':
+            print(f'{model_path=}')
             params_pretrained = torch.load(model_path, map_location='cpu')
             model_dict = self.recognizer.state_dict()
             # remove prefix for finetuned models
@@ -100,8 +101,12 @@ class OCRRecognition(TorchModel):
                 k.replace('recognizer.', '').replace('module.', ''): v
                 for k, v in params_pretrained.items()
             }
+            for k, v in check_point.items():
+                if k in check_point and v.shape != model_dict[k].shape:
+                    print(f'{k}: {v.shape}')
+                    check_point[k] = check_point[k].tile([1, 3, 1, 1])
             model_dict.update(check_point)
-            self.recognizer.load_state_dict(model_dict)
+            self.recognizer.load_state_dict(model_dict, strict=True)
 
         dict_path = os.path.join(model_dir, ModelFile.VOCAB_FILE)
         self.labelMapping = dict()
@@ -111,6 +116,7 @@ class OCRRecognition(TorchModel):
             cnt = 1
             # ConvNextViT and LightweightEdge model start from index=2
             if cfgs.model.recognizer == 'ConvNextViT' or cfgs.model.recognizer == 'LightweightEdge':
+                self.labelMapping[cnt] = ''
                 cnt += 1
             for line in lines:
                 line = line.strip('\n')
