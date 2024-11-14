@@ -681,7 +681,7 @@ class MBInvertedRepConvLayer(nn.Module):
         self.deploy = True
         feature_dim = self.rep_conv[0].conv.in_channels
         stride = self.rep_conv[0].conv.stride
-        kernel_size = max([(rcs, rcs) if isinstance(rcs, int) else rcs for rcs in self.rep_conv_size])
+        kernel_size = max(self.rep_conv_size)
         pad = get_same_padding(kernel_size)
         self.rep_conv_deploy = nn.Conv2d(
             feature_dim,
@@ -693,23 +693,18 @@ class MBInvertedRepConvLayer(nn.Module):
             bias=True)
 
         kernel, bias = self.get_equivalent_kernel_bias()
-        # self.rep_conv_deploy.weight.data = kernel
-        # self.rep_conv_deploy.bias.data = bias
-        self.rep_conv_deploy.weight = nn.Parameter(kernel)
-        self.rep_conv_deploy.bias = nn.Parameter(bias)
+        self.rep_conv_deploy.weight.data = kernel
+        self.rep_conv_deploy.bias.data = bias
         for para in self.parameters():
             para.detach_()
         self.__delattr__('rep_conv')
 
     def get_equivalent_kernel_bias(self):
-        # import pdb
-        # pdb.set_trace()
+        import pdb
+        pdb.set_trace()
         if 1 in self.rep_conv_size:
             kernel1x1, bias1x1 = self._fuse_bn_tensor(
                 self.rep_conv[self.rep_conv_size.index(1)])
-        elif (1, 1) in self.rep_conv_size:
-            kernel1x1, bias1x1 = self._fuse_bn_tensor(
-                self.rep_conv[self.rep_conv_size.index((1, 1))])
         else:
             kernel1x1 = None
             bias1x1 = 0
@@ -717,12 +712,6 @@ class MBInvertedRepConvLayer(nn.Module):
         if 3 in self.rep_conv_size:
             kernel3x3, bias3x3 = self._fuse_bn_tensor(
                 self.rep_conv[self.rep_conv_size.index(3)])
-        elif (1, 3) in self.rep_conv_size:
-            kernel3x3, bias3x3 = self._fuse_bn_tensor(
-                self.rep_conv[self.rep_conv_size.index((1, 3))])
-        elif (3, 3) in self.rep_conv_size:
-            kernel3x3, bias3x3 = self._fuse_bn_tensor(
-                self.rep_conv[self.rep_conv_size.index((3, 3))])
         else:
             kernel3x3 = None
             bias3x3 = 0
@@ -730,12 +719,7 @@ class MBInvertedRepConvLayer(nn.Module):
         if 5 in self.rep_conv_size:
             kernel5x5, bias5x5 = self._fuse_bn_tensor(
                 self.rep_conv[self.rep_conv_size.index(5)])
-        elif (1, 5) in self.rep_conv_size:
-            kernel5x5, bias5x5 = self._fuse_bn_tensor(
-                self.rep_conv[self.rep_conv_size.index((1, 5))])
-        elif (5, 5) in self.rep_conv_size:
-            kernel5x5, bias5x5 = self._fuse_bn_tensor(
-                self.rep_conv[self.rep_conv_size.index((5, 5))])
+
         else:
             kernel5x5 = 0
             bias5x5 = 0

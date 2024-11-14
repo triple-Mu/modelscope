@@ -66,7 +66,7 @@ class OCRRecognitionDataset(TorchCustomDataset):
             buf = six.BytesIO()
             buf.write(imgbuf)
             buf.seek(0)
-            img = Image.open(buf)# .convert('L')
+            img = Image.open(buf) # .convert('L')
             if self.reco_preprocess is not None:
                 try:
                     img = self.reco_preprocess(img)['image']

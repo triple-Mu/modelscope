@@ -51,8 +51,7 @@ class CompactRecBackboneMixSE(NasRecBackbone):
     def __init__(self, first_stride, input_channel, stride_stages,
                  n_cell_stages, width_stages, conv_op_ids, conv_candidates,
                  se_candidates):
-        # input_block_channel = 24
-        input_block_channel = 16
+        input_block_channel = 24
         first_conv = nn.Sequential(
             nn.Conv2d(
                 input_channel,
@@ -128,17 +127,9 @@ def plnas_linear_mix_se(input_channel, output_channel):
     stride_stages = [(2, 2), (2, 1), (2, 1), (2, 1)]
     n_cell_stages = [5, 5, 5, 5]
     width_stages = [32, 64, 96, 128]
-    # conv_op_ids = [
-    #     2, 23, 24, 26, 2, 2, 11, 27, 27, 27, 27, 2, 0, 2, 16, 10, 27, 2, 2, 2,
-    #     22, 10, 27, 3
-    # ]
-    # conv_op_ids = [
-    #     1, 22, 24, 25, 1, 1, 10, 27, 27, 27, 27, 1, 0, 1, 16, 10, 27, 1, 1, 1,
-    #     22, 10, 27, 3
-    # ]
     conv_op_ids = [
-        0, 21, 24, 24, 0, 0, 9, 27, 27, 27, 27, 0, 0, 0, 16, 9, 27, 0, 0, 0,
-        21, 9, 27, 3
+        2, 23, 24, 26, 2, 2, 11, 27, 27, 27, 27, 2, 0, 2, 16, 10, 27, 2, 2, 2,
+        22, 10, 27, 3
     ]
     net = CompactRecBackboneMixSE(2, input_channel, stride_stages,
                                   n_cell_stages, width_stages, conv_op_ids,
